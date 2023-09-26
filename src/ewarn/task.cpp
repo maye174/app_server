@@ -1,10 +1,10 @@
 
 
 #include "ewarn/inc/task.hpp"
-#include "inc/util.hpp"
+#include "server/inc/util.hpp"
 #include "wxpusher/inc/data.hpp"
 
-#include <iostream>
+#include <fmt/core.h>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -29,7 +29,7 @@ std::string http_request_done(std::string &suffix) {
     size_t start = pos;
 
     if (pos == std::string::npos) {
-        std::cerr << "ewarn http_request_done: 未找到目标字符串" << std::endl;
+        fmt::println("ewarn http_request_done: 未找到目标字符串");
         return "";
     }
 

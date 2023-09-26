@@ -4,10 +4,11 @@
 //
 
 #include "wxpusher/inc/qrcode.hpp"
-#include "fmt/core.h"
+
+#include <iostream>
 
 #include <curl/curl.h>
-#include <iostream>
+#include <fmt/core.h>
 #include <nlohmann/json.hpp>
 
 static size_t write_callback(void *contents, size_t size, size_t nmemb,

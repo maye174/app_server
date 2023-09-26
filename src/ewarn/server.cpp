@@ -1,6 +1,6 @@
 
 #include "ewarn/inc/server.hpp"
-#include "inc/util.hpp"
+#include "server/inc/util.hpp"
 #include "wxpusher/inc/qrcode.hpp"
 
 #include <iostream>

@@ -1,22 +1,23 @@
 
-#include "inc/util.hpp"
+#include "server/inc/util.hpp"
 
-#include <cstdlib> // 添加此头文件以使用getenv函数
-#include <iostream>
+#include <cstdlib>
 
 #include <curl/curl.h>
+#include <fmt/core.h>
 
 std::string get_someting_from_env(const char *str) {
     const char *appToken = std::getenv(str);
     if (appToken) {
         return std::string(appToken);
     } else {
-        std::cerr << "APP_TOKEN environment variable not found\n";
+        fmt::println("APP_TOKEN environment variable not found");
         return "";
     }
 }
 
-size_t write_callback(void *contents, size_t size, size_t nmemb, void *userp) {
+static size_t write_callback(void *contents, size_t size, size_t nmemb,
+                             void *userp) {
     ((std::string *)userp)->append((char *)contents, size * nmemb);
     return size * nmemb;
 }
@@ -36,8 +37,8 @@ std::string fetch_url(const std::string &url) {
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK) {
-            std::cerr << "curl_easy_perform() failed: "
-                      << curl_easy_strerror(res) << std::endl;
+            fmt::print("curl_easy_perform() failed: ", curl_easy_strerror(res),
+                       "\n");
         }
 
         curl_easy_cleanup(curl);

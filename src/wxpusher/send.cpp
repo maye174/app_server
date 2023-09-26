@@ -2,7 +2,7 @@
 #include "wxpusher/inc/send.hpp"
 
 #include <curl/curl.h>
-#include <iostream>
+#include <fmt/core.h>
 #include <nlohmann/json.hpp>
 #include <vector>
 
@@ -16,7 +16,7 @@ void send_message(const std::string &appToken, const std::string &content,
                   const std::vector<std::string> &uids) {
     CURL *curl = curl_easy_init();
     if (!curl) {
-        std::cerr << "wxpusher send_message: can't init curl\n";
+        fmt::println("wxpusher send_message: can't init curl");
         return;
     }
 
@@ -52,22 +52,21 @@ void send_message(const std::string &appToken, const std::string &content,
 
     // 处理响应
     if (res != CURLE_OK) {
-        std::cerr << "请求失败，错误信息：" << curl_easy_strerror(res)
-                  << std::endl;
+        fmt::print("请求失败，错误信息：", curl_easy_strerror(res), "\n");
     } else {
         // 使用nlohmann/json库解析响应
         nlohmann::json jsonResponse = nlohmann::json::parse(response);
         int code = jsonResponse["code"];
         std::string msg = jsonResponse["msg"];
 
-        std::cout << "状态码：" << code << std::endl;
-        std::cout << "提示消息：" << msg << std::endl;
+        fmt::print("状态码：", code, "\n");
+        fmt::print("提示消息：", msg, "\n");
 
         // 验证发送状态
         if (code == 1000) {
-            std::cout << "发送成功" << std::endl;
+            fmt::println("发送成功");
         } else {
-            std::cout << "发送失败" << std::endl;
+            fmt::println("发送失败");
         }
     }
 

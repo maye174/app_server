@@ -1,12 +1,12 @@
 add_rules("mode.debug", "mode.release")
-add_requires("libcurl", "libevent", "nlohmann_json", "sqlite3", "fmt")
+add_requires("libcurl", "libevent", "nlohmann_json", "sqlite3", "fmt", "openssl")
 add_includedirs("src")
 
 target("api_server")
     set_kind("binary")
     add_files("src/**.cpp")
     set_languages("cxx17")
-    add_packages("libevent", "libcurl", "nlohmann_json", "sqlite3", "fmt")
+    add_packages("libevent", "libcurl", "nlohmann_json", "sqlite3", "fmt", "openssl")
     if is_plat("windows") then 
         add_cxflags("/utf-8")
     else 
