@@ -66,7 +66,7 @@ void api_exit_verify(struct evhttp_request *req, void *arg) {
     evbuffer_remove(input_buffer, input_data, input_len);
     input_data[input_len - 1] = '\0';
 
-    fmt::print("(fn)api_exit: ", input_data, "\n");
+    fmt::print("(fn)api_exit: {0}{1}", input_data, "\n");
 
     json j;
 

@@ -30,7 +30,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     evbuffer_remove(input_buffer, input_data, input_len);
     input_data[input_len - 1] = '\0';
 
-    fmt::print("(fn)ewarn_api_create_qrcode: ", input_data, "\n");
+    fmt::print("(fn)ewarn_api_create_qrcode: {0}{1}", input_data, "\n");
 
     json j;
 
@@ -69,5 +69,5 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
                       "application/json");
     evhttp_send_reply(req, 200, "OK", buf);
     evbuffer_free(buf);
-    delete[] input_data;
+    free(input_data);
 }
