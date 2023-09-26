@@ -31,7 +31,7 @@ int main() {
     }
 
     register_callback(base, http);
-    auto ev_list = register_timer(base, http);
+    auto ev_list = register_timer(base);
 
     if (evhttp_bind_socket(http, "0.0.0.0", 3000) != 0) {
         fmt::println("Failed to bind to port 3000");
@@ -40,8 +40,9 @@ int main() {
 
     event_base_dispatch(base);
 
-    for (auto &i : ev_list) {
-        event_free(i);
+    for (auto &d : ev_list) {
+        event_free(d->ev);
+        free(d);
     }
     evhttp_free(http);
     event_base_free(base);

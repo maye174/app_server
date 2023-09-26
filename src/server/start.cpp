@@ -11,30 +11,30 @@ static void timer_flush(evutil_socket_t fd, short events, void *arg) {
 
     std::cout << std::flush;
 
-    struct event *ev = (struct event *)arg;
-    struct timeval tv;
-    evutil_timerclear(&tv);
-    tv.tv_sec = *(int *)arg;
-    event_add(ev, &tv);
+    auto d = (timer_data *)arg;
+    event_add(d->ev, &d->interval);
 }
 
-static struct event *register_timer_helper(struct event_base *base,
-                                           void (*fn)(long long, short, void *),
-                                           int time) {
-    struct event *ev = event_new(base, -1, 0, fn, &time);
-    struct timeval tv;
-    evutil_timerclear(&tv);
-    tv.tv_sec = time;
-    event_add(ev, &tv);
+static timer_data *register_timer_helper(struct event_base *base,
+                                         void (*fn)(long long, short, void *),
+                                         int id, int time) {
+    timer_data *data = (timer_data *)malloc(sizeof(timer_data));
+    data->ev = event_new(base, -1, 0, fn, data);
 
-    return ev;
+    evutil_timerclear(&data->interval);
+    data->id = id;
+    data->interval.tv_sec = time;
+
+    event_add(data->ev, &data->interval);
+
+    return data;
 }
 
-std::vector<struct event *> register_timer(struct event_base *base,
-                                           struct evhttp *http) {
-    //
-    std::vector<struct event *> ret;
-    ret.emplace_back(register_timer_helper(base, timer_flush, 20));
+std::vector<timer_data *> register_timer(struct event_base *base) {
+
+    int id = 0;
+    std::vector<timer_data *> ret;
+    ret.emplace_back(register_timer_helper(base, timer_flush, id++, 20));
 
     return ret;
 }
