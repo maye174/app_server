@@ -44,7 +44,14 @@ static std::string gen_key() {
     return sha256_ss.str();
 }
 
-void api_exit(struct evhttp_request *req, void *arg) {
+std::string key;
+
+void api_exit_gen(struct evhttp_request *req, void *arg) {
+    key = gen_key();
+    fmt::println(key);
+}
+
+void api_exit_verify(struct evhttp_request *req, void *arg) {
     struct evbuffer *buf = evbuffer_new();
     if (!buf) {
         fmt::print("(fn)api_exit: Failed to create response buffer\n");
@@ -52,9 +59,9 @@ void api_exit(struct evhttp_request *req, void *arg) {
         return;
     }
 
-    std::string key = gen_key();
+    // std::string key = gen_key();
 
-    fmt::println(key);
+    // fmt::println(key);
 
     // 获取请求正文
     struct evbuffer *input_buffer = evhttp_request_get_input_buffer(req);
@@ -91,6 +98,8 @@ void api_exit(struct evhttp_request *req, void *arg) {
         evbuffer_free(buf);
         return;
     }
+
+    key = gen_key();
 
     evhttp_send_reply(req, 200, "OK", buf);
     evbuffer_free(buf);

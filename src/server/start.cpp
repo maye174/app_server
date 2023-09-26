@@ -6,7 +6,8 @@
 #include "wxpusher/inc/callback.hpp"
 
 void register_callback(struct event_base *base, struct evhttp *http) {
-    evhttp_set_cb(http, "/api/exit", api_exit, base);
+    evhttp_set_cb(http, "/api/exit/gen", api_exit_gen, nullptr);
+    evhttp_set_cb(http, "/api/exit/verify", api_exit_verify, base);
     evhttp_set_cb(http, "/api/ewarn/creata_qrcode", ewarn_api_create_qrcode,
                   nullptr);
     evhttp_set_cb(http, "/api/wxpusher_callback", wxpusher_callback, nullptr);
