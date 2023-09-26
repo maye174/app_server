@@ -59,10 +59,6 @@ void api_exit_verify(struct evhttp_request *req, void *arg) {
         return;
     }
 
-    // std::string key = gen_key();
-
-    // fmt::println(key);
-
     // 获取请求正文
     struct evbuffer *input_buffer = evhttp_request_get_input_buffer(req);
     size_t input_len = evbuffer_get_length(input_buffer);
