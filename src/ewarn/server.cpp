@@ -28,20 +28,24 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     size_t input_len = evbuffer_get_length(input_buffer);
     char *input_data = (char *)malloc(sizeof(char) * (input_len + 1));
     evbuffer_remove(input_buffer, input_data, input_len);
-    input_data[input_len - 1] = '\0';
+    input_data[input_len] = '\0';
 
-    fmt::print("(fn)ewarn_api_create_qrcode: {0}{1}", input_data, "\n");
+    fmt::println("(fn)ewarn_api_create_qrcode: {0}", input_data);
 
     json j;
 
     try {
         j = json::parse(input_data);
     } catch (const json::parse_error &e) {
-        fmt::println("错误:解析JSON数据时发生异常 - ", e.what());
+        fmt::println(
+            "(fn)ewarn_api_create_qrcode: 错误 解析JSON数据时发生异常 - {}",
+            e.what());
     } catch (const json::type_error &e) {
-        fmt::println("错误:JSON数据类型错误 - ", e.what());
+        fmt::println("(fn)ewarn_api_create_qrcode: 错误 JSON数据类型错误 - {}",
+                     e.what());
     } catch (const std::exception &e) {
-        fmt::println("错误：发生未知异常 - ", e.what());
+        fmt::println("(fn)ewarn_api_create_qrcode: 错误 发生未知异常 - {}",
+                     e.what());
     }
 
     if (!j.contains("building_number") || !j.contains("room_number")) {

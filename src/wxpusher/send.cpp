@@ -59,8 +59,8 @@ void send_message(const std::string &appToken, const std::string &content,
         int code = jsonResponse["code"];
         std::string msg = jsonResponse["msg"];
 
-        fmt::print("状态码：", code, "\n");
-        fmt::print("提示消息：", msg, "\n");
+        fmt::println("状态码：{}", code);
+        fmt::println("提示消息：{}", msg);
 
         // 验证发送状态
         if (code == 1000) {
