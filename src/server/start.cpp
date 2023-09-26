@@ -16,7 +16,8 @@ static void timer_flush(evutil_socket_t fd, short events, void *arg) {
 }
 
 static timer_data *register_timer_helper(struct event_base *base,
-                                         void (*fn)(long long, short, void *),
+                                         void (*fn)(evutil_socket_t fd,
+                                                    short events, void *arg),
                                          int id, int time) {
     timer_data *data = (timer_data *)malloc(sizeof(timer_data));
     data->ev = event_new(base, -1, 0, fn, data);
