@@ -30,7 +30,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     evbuffer_remove(input_buffer, input_data, input_len);
     input_data[input_len] = '\0';
 
-    fmt::println("(fn)ewarn_api_create_qrcode: {0}", input_data);
+    fmt::println("(fn)ewarn_api_create_qrcode: {}", input_data);
 
     json j;
 
@@ -49,8 +49,8 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     }
 
     if (!j.contains("building_number") || !j.contains("room_number")) {
-        fmt::print("ewarn_api_create_qrcode: 未找到building_number 或者 "
-                   "room_number\n 400\n");
+        fmt::println("ewarn_api_create_qrcode: 未找到building_number 或者 "
+                     "room_number\n 400");
         evhttp_send_error(req, 400, "Bad Request");
         evbuffer_free(buf);
         return;
@@ -66,7 +66,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
 
     std::string response_body = "{\"url\":\"" + qrcode_url + "\"}";
 
-    fmt::println(response_body);
+    fmt::println("{}", response_body);
 
     evbuffer_add_printf(buf, response_body.c_str());
     evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type",
