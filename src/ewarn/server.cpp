@@ -3,7 +3,6 @@
 #include "server/inc/util.hpp"
 #include "wxpusher/inc/qrcode.hpp"
 
-#include <iostream>
 #include <string>
 #include <vector>
 
@@ -27,10 +26,11 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     // 获取请求正文
     struct evbuffer *input_buffer = evhttp_request_get_input_buffer(req);
     size_t input_len = evbuffer_get_length(input_buffer);
-    char *input_data = new char[input_len];
+    char *input_data = (char *)malloc(sizeof(char) * (input_len + 1));
     evbuffer_remove(input_buffer, input_data, input_len);
+    input_data[input_len - 1] = '\0';
 
-    std::cerr << "(fn)ewarn_api_create_qrcode: " << input_data << std::endl;
+    fmt::print("(fn)ewarn_api_create_qrcode: ", input_data, "\n");
 
     json j;
 
@@ -62,7 +62,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
 
     std::string response_body = "{\"url\":\"" + qrcode_url + "\"}";
 
-    std::cerr << response_body << std::endl;
+    fmt::println(response_body);
 
     evbuffer_add_printf(buf, response_body.c_str());
     evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type",

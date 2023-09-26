@@ -2,7 +2,7 @@
 #include "server/inc/exit.hpp"
 #include "event2/event.h"
 
-#include <iostream>
+#include <cstdlib>
 #include <random>
 #include <sstream>
 #include <string>
@@ -62,10 +62,11 @@ void api_exit_verify(struct evhttp_request *req, void *arg) {
     // 获取请求正文
     struct evbuffer *input_buffer = evhttp_request_get_input_buffer(req);
     size_t input_len = evbuffer_get_length(input_buffer);
-    char *input_data = new char[input_len];
+    char *input_data = (char *)malloc(sizeof(char) * (input_len + 1));
     evbuffer_remove(input_buffer, input_data, input_len);
+    input_data[input_len - 1] = '\0';
 
-    std::cerr << "(fn)api_exit: " << input_data << std::endl;
+    fmt::print("(fn)api_exit: ", input_data, "\n");
 
     json j;
 
