@@ -7,4 +7,8 @@
 #include <event2/http.h>
 #include <event2/keyvalq_struct.h>
 
+#include <vector>
+
+std::vector<struct event *> register_timer(struct event_base *base,
+                                           struct evhttp *http);
 void register_callback(struct event_base *base, struct evhttp *http);

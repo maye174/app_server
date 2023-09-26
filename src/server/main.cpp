@@ -3,6 +3,7 @@
 // 2023/9/25
 //
 
+#include "event2/event.h"
 #include "server/inc/start.hpp"
 
 #include <fmt/core.h>
@@ -30,6 +31,7 @@ int main() {
     }
 
     register_callback(base, http);
+    auto ev_list = register_timer(base, http);
 
     if (evhttp_bind_socket(http, "0.0.0.0", 3000) != 0) {
         fmt::println("Failed to bind to port 3000");
@@ -38,6 +40,9 @@ int main() {
 
     event_base_dispatch(base);
 
+    for (auto &i : ev_list) {
+        event_free(i);
+    }
     evhttp_free(http);
     event_base_free(base);
 
