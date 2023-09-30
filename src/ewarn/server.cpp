@@ -73,7 +73,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
 }
 
 extern std::string load_builds_json();
-extern std::string load_rooms_json(int buildid);
+extern std::string load_rooms_json(const std::string &buildid);
 
 void ewarn_api_get_epay_json(struct evhttp_request *req, void *arg) {
     struct evbuffer *buf = evbuffer_new();
@@ -119,8 +119,7 @@ void ewarn_api_get_epay_json(struct evhttp_request *req, void *arg) {
     if (is_build) {
         response_body = load_builds_json();
     } else {
-        int buildid = j["buildid"].get<int>();
-        response_body = load_rooms_json(buildid);
+        response_body = load_rooms_json(j["buildid"].get_ref<std::string &>());
     }
 
     LOG_F(INFO, "%s", response_body.c_str());

@@ -44,25 +44,27 @@ std::string load_builds_json() {
     return read_buffer;
 }
 
-std::string load_rooms_json(int buildid) {
+std::string load_rooms_json(const std::string &buildid) {
+
+    if (buildid.empty()) {
+        return "";
+    }
+
     CURL *curl;
     CURLcode res;
     std::string read_buffer;
 
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
+
     if (curl) {
-        char str[100];
-        sprintf(str, "sysid=1&areaid=1&districtid=1&buildid=%d&floorid=1",
-                buildid);
-        if (strcmp(str, "") == 0) {
-            return "";
-        }
+        std::string str =
+            "sysid=1&areaid=1&districtid=1&buildid=" + buildid + "&floorid=1";
 
         curl_easy_setopt(
             curl, CURLOPT_URL,
             "https://218.22.140.88:8443/epay/wxpage/wanxiao/getroom.json");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, str);
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, str.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
