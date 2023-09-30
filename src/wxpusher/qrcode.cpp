@@ -6,7 +6,7 @@
 #include "wxpusher/inc/qrcode.hpp"
 
 #include <curl/curl.h>
-#include <fmt/core.h>
+#include <loguru.hpp>
 #include <nlohmann/json.hpp>
 
 static size_t write_callback(void *contents, size_t size, size_t nmemb,
@@ -46,8 +46,10 @@ std::string create_qrcode(const std::string &app_token,
 
         res = curl_easy_perform(curl);
         if (res != CURLE_OK) {
-            fmt::println("curl_easy_perform() failed: {}",
-                         curl_easy_strerror(res));
+            // fmt::println("curl_easy_perform() failed: {}",
+            //              curl_easy_strerror(res));
+            LOG_F(ERROR, "curl_easy_perform() failed: %s",
+                  curl_easy_strerror(res));
         }
 
         curl_easy_cleanup(curl);
@@ -56,24 +58,23 @@ std::string create_qrcode(const std::string &app_token,
 
     curl_global_cleanup();
 
-    fmt::println("(fn)create_qrcode qrcode_data: {}", response);
+    // fmt::println("(fn)create_qrcode qrcode_data: {}", response);
+    LOG_F(INFO, "%s", response.c_str());
 
     // 解析返回的JSON数据以获取二维码图片的URL
     nlohmann::json j;
     try {
         j = nlohmann::json::parse(response);
     } catch (const nlohmann::json::parse_error &e) {
-        fmt::println("错误:解析JSON数据时发生异常 - {}", e.what());
+        LOG_F(ERROR, "解析JSON数据时发生异常 - %s", e.what());
     } catch (const nlohmann::json::type_error &e) {
-        fmt::println("错误:JSON数据类型错误 - {}", e.what());
+        LOG_F(ERROR, "JSON数据类型错误 - %s", e.what());
     } catch (const std::exception &e) {
-        fmt::println("错误：发生未知异常 - {}", e.what());
+        LOG_F(ERROR, "发生未知异常 - %s", e.what());
     }
 
     if (!j.contains("success") || j["success"].get<bool>() != true) {
-        fmt::println(
-            "wxpusher: 二维码创建错误 "); //,
-                                          // j["msg"].get_ref<std::string &>());
+        LOG_F(ERROR, "wxpusher: 二维码创建错误");
         return "";
     }
 

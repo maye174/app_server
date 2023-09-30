@@ -2,7 +2,7 @@
 #include "wxpusher/inc/send.hpp"
 
 #include <curl/curl.h>
-#include <fmt/core.h>
+#include <loguru.hpp>
 #include <nlohmann/json.hpp>
 #include <vector>
 
@@ -16,7 +16,7 @@ void send_message(const std::string &appToken, const std::string &content,
                   const std::vector<std::string> &uids) {
     CURL *curl = curl_easy_init();
     if (!curl) {
-        fmt::println("wxpusher send_message: can't init curl");
+        LOG_F(ERROR, "can't init curl");
         return;
     }
 
@@ -52,21 +52,34 @@ void send_message(const std::string &appToken, const std::string &content,
 
     // 处理响应
     if (res != CURLE_OK) {
-        fmt::print("请求失败，错误信息：", curl_easy_strerror(res), "\n");
+        LOG_F(ERROR, "请求失败，错误信息：%s \n", curl_easy_strerror(res));
     } else {
         // 使用nlohmann/json库解析响应
-        nlohmann::json jsonResponse = nlohmann::json::parse(response);
-        int code = jsonResponse["code"];
-        std::string msg = jsonResponse["msg"];
+        nlohmann::json j;
+        try {
+            j = nlohmann::json::parse(response);
+        } catch (const nlohmann::json::parse_error &e) {
+            LOG_F(ERROR, "解析JSON数据时发生异常 - %s", e.what());
+            return;
+        } catch (const nlohmann::json::type_error &e) {
+            LOG_F(ERROR, "JSON数据类型错误 - %s", e.what());
+            return;
+        } catch (const std::exception &e) {
+            LOG_F(ERROR, "发生未知异常 - %s", e.what());
+            return;
+        }
 
-        fmt::println("状态码：{}", code);
-        fmt::println("提示消息：{}", msg);
+        int code = j["code"];
+        std::string msg = j["msg"];
+
+        LOG_F(INFO, "状态码：%d", code);
+        LOG_F(INFO, "提示消息：%s", msg.c_str());
 
         // 验证发送状态
         if (code == 1000) {
-            fmt::println("发送成功");
+            LOG_F(INFO, "发送成功\n");
         } else {
-            fmt::println("发送失败");
+            LOG_F(ERROR, "发送失败\n");
         }
     }
 

@@ -9,7 +9,7 @@
 #include <event2/buffer.h>
 #include <event2/http.h>
 #include <event2/keyvalq_struct.h>
-#include <fmt/core.h>
+#include <loguru.hpp>
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -17,8 +17,8 @@ using json = nlohmann::json;
 void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     struct evbuffer *buf = evbuffer_new();
     if (!buf) {
-        fmt::print(
-            "ewarn_api_create_qrcode: Failed to create response buffer\n");
+        LOG_F(ERROR, "ewarn_api_create_qrcode: Failed to create response "
+                     "buffer");
         evhttp_send_error(req, 500, "Internal Server Error");
         return;
     }
@@ -30,26 +30,23 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     evbuffer_remove(input_buffer, input_data, input_len);
     input_data[input_len] = '\0';
 
-    fmt::println("(fn)ewarn_api_create_qrcode: {}", input_data);
+    // fmt::println("(fn)ewarn_api_create_qrcode: {}", input_data);
+    LOG_F(INFO, "%s", input_data);
 
     json j;
 
     try {
         j = json::parse(input_data);
     } catch (const json::parse_error &e) {
-        fmt::println(
-            "(fn)ewarn_api_create_qrcode: 错误 解析JSON数据时发生异常 - {}",
-            e.what());
+        LOG_F(ERROR, "解析JSON数据时发生异常 - %s", e.what());
     } catch (const json::type_error &e) {
-        fmt::println("(fn)ewarn_api_create_qrcode: 错误 JSON数据类型错误 - {}",
-                     e.what());
+        LOG_F(ERROR, "JSON数据类型错误 - %s", e.what());
     } catch (const std::exception &e) {
-        fmt::println("(fn)ewarn_api_create_qrcode: 错误 发生未知异常 - {}",
-                     e.what());
+        LOG_F(ERROR, "发生未知异常 - %s", e.what());
     }
 
     if (!j.contains("building_number") || !j.contains("room_number")) {
-        fmt::println("ewarn_api_create_qrcode: 未找到building_number 或者 "
+        LOG_F(ERROR, "未找到building_number 或者 "
                      "room_number\n 400");
         evhttp_send_error(req, 400, "Bad Request");
         evbuffer_free(buf);
@@ -66,7 +63,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
 
     std::string response_body = "{\"url\":\"" + qrcode_url + "\"}";
 
-    fmt::println("{}", response_body);
+    LOG_F(INFO, "%s", response_body.c_str());
 
     evbuffer_add_printf(buf, response_body.c_str());
     evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type",

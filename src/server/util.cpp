@@ -4,14 +4,14 @@
 #include <cstdlib>
 
 #include <curl/curl.h>
-#include <fmt/core.h>
+#include <loguru.hpp>
 
 std::string get_someting_from_env(const char *str) {
     const char *appToken = std::getenv(str);
     if (appToken) {
         return std::string(appToken);
     } else {
-        fmt::println("APP_TOKEN environment variable not found");
+        LOG_F(ERROR, "%s environment variable not found", str);
         return "";
     }
 }
@@ -37,8 +37,8 @@ std::string fetch_url(const std::string &url) {
         res = curl_easy_perform(curl);
 
         if (res != CURLE_OK) {
-            fmt::print("curl_easy_perform() failed: ", curl_easy_strerror(res),
-                       "\n");
+            LOG_F(ERROR, "curl_easy_perform() failed: %s",
+                  curl_easy_strerror(res));
         }
 
         curl_easy_cleanup(curl);

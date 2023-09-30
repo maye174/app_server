@@ -6,7 +6,7 @@
 #include "event2/event.h"
 #include "server/inc/start.hpp"
 
-#include <fmt/core.h>
+#include <loguru.hpp>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -18,15 +18,23 @@ int main() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
 
+#ifdef NDEBUG
+    loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
+#else
+    loguru::g_stderr_verbosity = loguru::Verbosity_INFO;
+#endif
+
+    loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);
+
     struct event_base *base = event_base_new();
     if (!base) {
-        fmt::println("Failed to create event base");
+        LOG_F(ERROR, "Failed to create event base");
         return 1;
     }
 
     struct evhttp *http = evhttp_new(base);
     if (!http) {
-        fmt::println("Failed to create HTTP server");
+        LOG_F(ERROR, "Failed to create HTTP server");
         return 1;
     }
 
@@ -34,7 +42,7 @@ int main() {
     auto ev_list = register_timer(base);
 
     if (evhttp_bind_socket(http, "0.0.0.0", 3000) != 0) {
-        fmt::println("Failed to bind to port 3000");
+        LOG_F(ERROR, "Failed to bind to port 3000");
         return 1;
     }
 

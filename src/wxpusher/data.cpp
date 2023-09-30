@@ -1,7 +1,7 @@
 
 #include "wxpusher/inc/data.hpp"
 
-#include <iostream>
+#include <loguru.hpp>
 
 #include <event2/buffer.h>
 #include <event2/http.h>
@@ -28,7 +28,9 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
     sqlite3 *db;
     int rc = sqlite3_open("wxpusher_app_data.db", &db);
     if (rc) {
-        std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
+        // std::cerr << "Can't open database: " << sqlite3_errmsg(db) <<
+        // std::endl;
+        LOG_F(ERROR, "Can't open database: %s", sqlite3_errmsg(db));
         sqlite3_close(db);
         return;
     }
@@ -42,7 +44,8 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
     char *err_msg = nullptr;
     rc = sqlite3_exec(db, sql_create_table, nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
-        std::cerr << "SQL error: " << err_msg << std::endl;
+        // std::cerr << "SQL error: " << err_msg << std::endl;
+        LOG_F(ERROR, "SQL error: %s", err_msg);
         sqlite3_free(err_msg);
         sqlite3_close(db);
         return;
@@ -54,7 +57,8 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
         std::to_string(appId) + ", '" + uid + "', '" + extra + "');";
     rc = sqlite3_exec(db, sql_insert.c_str(), nullptr, nullptr, &err_msg);
     if (rc != SQLITE_OK) {
-        std::cerr << "SQL error: " << err_msg << std::endl;
+        // std::cerr << "SQL error: " << err_msg << std::endl;
+        LOG_F(ERROR, "SQL error: %s", err_msg);
         sqlite3_free(err_msg);
     }
 
@@ -72,7 +76,9 @@ list query_data_by_appid(int appid) {
 
     int rc = sqlite3_open("app_data.db", &db);
     if (rc) {
-        std::cerr << "Can't open database: " << sqlite3_errmsg(db) << std::endl;
+        // std::cerr << "Can't open database: " << sqlite3_errmsg(db) <<
+        // std::endl;
+        LOG_F(ERROR, "Can't open database: %s", sqlite3_errmsg(db));
         sqlite3_close(db);
         return results;
     }
@@ -91,7 +97,8 @@ list query_data_by_appid(int appid) {
             results.emplace_back(uid, extra);
         }
     } else {
-        std::cerr << "SQL error: " << sqlite3_errmsg(db) << std::endl;
+        // std::cerr << "SQL error: " << sqlite3_errmsg(db) << std::endl;
+        LOG_F(ERROR, "SQL error: %s", sqlite3_errmsg(db));
     }
 
     sqlite3_finalize(stmt);

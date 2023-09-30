@@ -5,15 +5,7 @@
 #include "server/inc/exit.hpp"
 #include "wxpusher/inc/callback.hpp"
 
-#include <iostream>
-
-static void timer_flush(evutil_socket_t fd, short events, void *arg) {
-
-    std::cout << std::flush;
-
-    auto d = (timer_data *)arg;
-    event_add(d->ev, &d->interval);
-}
+#include <loguru.hpp>
 
 static timer_data *register_timer_helper(struct event_base *base,
                                          void (*fn)(evutil_socket_t fd,
@@ -35,7 +27,7 @@ std::vector<timer_data *> register_timer(struct event_base *base) {
 
     int id = 0;
     std::vector<timer_data *> ret;
-    ret.emplace_back(register_timer_helper(base, timer_flush, id++, 20));
+    // ret.emplace_back(register_timer_helper(base, timer_flush, id++, 20));
 
     return ret;
 }

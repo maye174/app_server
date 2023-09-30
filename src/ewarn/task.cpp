@@ -4,7 +4,6 @@
 #include "server/inc/util.hpp"
 #include "wxpusher/inc/data.hpp"
 
-#include <fmt/core.h>
 #include <string>
 #include <tuple>
 #include <vector>
@@ -12,6 +11,7 @@
 #include <event2/buffer.h>
 #include <event2/http.h>
 #include <event2/keyvalq_struct.h>
+#include <loguru.hpp>
 
 using list = std::vector<std::tuple<std::string, std::string>>;
 
@@ -29,7 +29,7 @@ std::string http_request_done(std::string &suffix) {
     size_t start = pos;
 
     if (pos == std::string::npos) {
-        fmt::println("ewarn http_request_done: 未找到目标字符串");
+        LOG_F(ERROR, "ewarn http_request_done: 未找到目标字符串");
         return "";
     }
 

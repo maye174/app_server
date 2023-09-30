@@ -11,7 +11,7 @@
 #include <event2/buffer.h>
 #include <event2/http.h>
 #include <event2/keyvalq_struct.h>
-#include <fmt/core.h>
+#include <loguru.hpp>
 #include <nlohmann/json.hpp>
 #include <openssl/sha.h>
 
@@ -48,13 +48,14 @@ std::string key;
 
 void api_exit_gen(struct evhttp_request *req, void *arg) {
     key = gen_key();
-    fmt::println(key);
+    // 在release下也输出key
+    LOG_F(ERROR, "%s", key.c_str());
 }
 
 void api_exit_verify(struct evhttp_request *req, void *arg) {
     struct evbuffer *buf = evbuffer_new();
     if (!buf) {
-        fmt::print("(fn)api_exit: Failed to create response buffer\n");
+        LOG_F(ERROR, "Failed to create response buffer");
         evhttp_send_error(req, 500, "Internal Server Error");
         return;
     }
@@ -66,22 +67,22 @@ void api_exit_verify(struct evhttp_request *req, void *arg) {
     evbuffer_remove(input_buffer, input_data, input_len);
     input_data[input_len] = '\0';
 
-    fmt::println("(fn)api_exit: {0}", input_data);
+    LOG_F(INFO, "%s", input_data);
 
     json j;
 
     try {
         j = json::parse(input_data);
     } catch (const json::parse_error &e) {
-        fmt::println("(fn)api_exit: 错误 解析JSON数据时发生异常 {}", e.what());
+        LOG_F(ERROR, "解析JSON数据时发生异常 - %s", e.what());
     } catch (const json::type_error &e) {
-        fmt::println("(fn)api_exit: 错误 JSON数据类型错误 {}", e.what());
+        LOG_F(ERROR, "JSON数据类型错误 - %s", e.what());
     } catch (const std::exception &e) {
-        fmt::println("(fn)api_exit: 错误 发生未知异常 {}", e.what());
+        LOG_F(ERROR, "发生未知异常 - %s", e.what());
     }
 
     if (!j.contains("key")) {
-        fmt::print("(fn)api_exit: 空内容\n 400\n");
+        LOG_F(ERROR, "空内容");
         evhttp_send_error(req, 400, "Bad Request");
         evbuffer_free(buf);
         return;
@@ -90,7 +91,7 @@ void api_exit_verify(struct evhttp_request *req, void *arg) {
     std::string key1 = j["key"].get<std::string>();
 
     if (key != key1) {
-        fmt::println("(fn)api_exit: key错误");
+        LOG_F(ERROR, "key错误");
         evhttp_send_error(req, 400, "Bad Request");
         evbuffer_free(buf);
         return;
