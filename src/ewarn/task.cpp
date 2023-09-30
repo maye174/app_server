@@ -42,8 +42,6 @@ std::string http_request_done(std::string &suffix) {
     return number;
 }
 
-std::string find_roomid(std::string &);
-
 void ew_timer_task(evutil_socket_t fd, short events, void *arg) {
     printf("ew_timer_task\n");
 

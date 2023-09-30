@@ -46,13 +46,13 @@ static std::string gen_key() {
 
 std::string key;
 
-void api_exit_gen(struct evhttp_request *req, void *arg) {
+void exit_api_gen(struct evhttp_request *req, void *arg) {
     key = gen_key();
     // 在release下也输出key
     LOG_F(ERROR, "%s", key.c_str());
 }
 
-void api_exit_verify(struct evhttp_request *req, void *arg) {
+void exit_api_verify(struct evhttp_request *req, void *arg) {
     struct evbuffer *buf = evbuffer_new();
     if (!buf) {
         LOG_F(ERROR, "Failed to create response buffer");
