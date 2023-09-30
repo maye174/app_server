@@ -29,11 +29,12 @@ std::string load_builds_json() {
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
-        res = curl_easy_perform(curl);
-
         // 取消SSL证书验证
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        res = curl_easy_perform(curl);
+
         if (res != CURLE_OK) {
             LOG_F(ERROR, "curl_easy_perform() failed: %s",
                   curl_easy_strerror(res));
@@ -74,11 +75,12 @@ std::string load_rooms_json(int buildid) {
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
-        res = curl_easy_perform(curl);
-
         // 取消SSL证书验证
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+        res = curl_easy_perform(curl);
+
         if (res != CURLE_OK) {
             LOG_F(ERROR, "curl_easy_perform() failed: %s",
                   curl_easy_strerror(res));
