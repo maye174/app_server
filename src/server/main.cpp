@@ -18,7 +18,7 @@ int main() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
 
-#ifdef NDEBUG
+#ifndef NDEBUG
     loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
 #else
     loguru::g_stderr_verbosity = loguru::Verbosity_INFO;
