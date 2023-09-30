@@ -1,9 +1,6 @@
 #include <curl/curl.h>
 #include <loguru.hpp>
-#include <nlohmann/json.hpp>
 #include <string>
-
-using json = nlohmann::json;
 
 static size_t write_callback(void *contents, size_t size, size_t nmemb,
                              void *userp) {
@@ -19,13 +16,12 @@ std::string load_builds_json() {
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
     if (curl) {
-        json param = {{"sysid", "1"}, {"areaid", "1"}, {"districtid", "1"}};
-        std::string postData = param.dump();
 
         curl_easy_setopt(
             curl, CURLOPT_URL,
             "https://218.22.140.88:8443/epay/wxpage/wanxiao/getbuild.json");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS,
+                         "sysid=1&areaid=1&districtid=1");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
@@ -55,23 +51,17 @@ std::string load_rooms_json(int buildid) {
     curl_global_init(CURL_GLOBAL_DEFAULT);
     curl = curl_easy_init();
     if (curl) {
-        char str[10];
-        sprintf(str, "%d", buildid);
-        if (strcmp(str, "0") == 0) {
+        char str[100];
+        sprintf(str, "sysid=1&areaid=1&districtid=1&buildid=%d&floorid=1",
+                buildid);
+        if (strcmp(str, "") == 0) {
             return "";
         }
-
-        json param = {{"sysid", "1"},
-                      {"areaid", "1"},
-                      {"districtid", "1"},
-                      {"buildid", str},
-                      {"floorid", "1"}};
-        std::string postData = param.dump();
 
         curl_easy_setopt(
             curl, CURLOPT_URL,
             "https://218.22.140.88:8443/epay/wxpage/wanxiao/getroom.json");
-        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postData.c_str());
+        curl_easy_setopt(curl, CURLOPT_POSTFIELDS, str);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
 
