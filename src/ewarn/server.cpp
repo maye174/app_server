@@ -125,6 +125,12 @@ void ewarn_api_get_epay_json(struct evhttp_request *req, void *arg) {
 
     LOG_F(INFO, "%s", response_body.c_str());
 
+    if (response_body.empty()) {
+        evhttp_send_error(req, 400, "Bad Request");
+        evbuffer_free(buf);
+        return;
+    }
+
     evbuffer_add_printf(buf, response_body.c_str());
     evhttp_add_header(evhttp_request_get_output_headers(req), "Content-Type",
                       "application/json");
