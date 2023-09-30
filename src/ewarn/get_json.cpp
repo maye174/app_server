@@ -1,3 +1,4 @@
+#include <cstring>
 #include <curl/curl.h>
 #include <loguru.hpp>
 #include <string>
