@@ -72,14 +72,30 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
         return;
     }
 
-    // 检查是否已经存在
+    // 检查是否已经存在, 存在则覆盖
     std::string sql_query = "SELECT * FROM wxpusher_app_data WHERE appId = " +
                             std::to_string(appId) + " AND uid = '" + uid + "';";
     sqlite3_stmt *stmt;
     rc = sqlite3_prepare_v2(db, sql_query.c_str(), -1, &stmt, nullptr);
     if (rc == SQLITE_OK) {
         if (sqlite3_step(stmt) == SQLITE_ROW) {
-            LOG_F(INFO, "已存在\n 200");
+            LOG_F(INFO, "已存在，准备覆盖");
+
+            // 更新数据
+            std::string sql_update =
+                "UPDATE wxpusher_app_data SET extra = '" + extra +
+                "' WHERE appId = " + std::to_string(appId) + " AND uid = '" +
+                uid + "';";
+            rc = sqlite3_exec(db, sql_update.c_str(), nullptr, nullptr,
+                              &err_msg);
+            if (rc != SQLITE_OK) {
+                LOG_F(ERROR, "SQL error: %s", err_msg);
+                sqlite3_free(err_msg);
+            }
+
+            // 关闭数据库
+            sqlite3_close(db);
+            // 200 OK
             evhttp_send_reply(req, 200, "OK", buf);
             evbuffer_free(buf);
             return;

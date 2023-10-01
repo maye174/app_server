@@ -84,8 +84,6 @@ void ew_timer_task(evutil_socket_t fd, short events, void *arg) {
 
     // 抓包然后发送
     for (auto &i : l) {
-        LOG_F(INFO, "%s", std::get<1>(i).c_str());
-
         std::string number = http_request_done(std::get<1>(i));
 
         if (number.empty() || std::stoi(number) /*< 20*/)
