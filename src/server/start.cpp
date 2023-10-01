@@ -6,14 +6,30 @@
 #include "server/inc/exit.hpp"
 #include "wxpusher/inc/callback.hpp"
 
+#include <atomic>
+
 #include <loguru.hpp>
 
-static timer_data *register_timer_helper(struct event_base *base,
+extern std::atomic<bool> exit_flag;
+
+static void check_exit_flag(evutil_socket_t fd, short events, void *arg) {
+    auto d = (timer_data *)arg;
+    if (exit_flag) {
+        LOG_F(INFO, "exit_flag is true, timer exit");
+        event_base_loopbreak(d->base_timer);
+        return;
+    }
+
+    event_add(d->ev, &d->interval);
+}
+
+static timer_data *register_timer_helper(struct event_base *base_timer,
                                          void (*fn)(evutil_socket_t fd,
                                                     short events, void *arg),
                                          int id, int time) {
     timer_data *data = (timer_data *)malloc(sizeof(timer_data));
-    data->ev = event_new(base, -1, 0, fn, data);
+    data->base_timer = base_timer;
+    data->ev = event_new(base_timer, -1, 0, fn, data);
 
     evutil_timerclear(&data->interval);
     data->id = id;
@@ -24,11 +40,14 @@ static timer_data *register_timer_helper(struct event_base *base,
     return data;
 }
 
-std::vector<timer_data *> register_timer(struct event_base *base) {
+std::vector<timer_data *> register_timer(struct event_base *base_timer) {
 
     int id = 0;
     std::vector<timer_data *> ret;
-    ret.emplace_back(register_timer_helper(base, ew_timer_task, id++, 60));
+    ret.emplace_back(
+        register_timer_helper(base_timer, check_exit_flag, id++, 20));
+    ret.emplace_back(
+        register_timer_helper(base_timer, ew_timer_task, id++, 60));
 
     return ret;
 }

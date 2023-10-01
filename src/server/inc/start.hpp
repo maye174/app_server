@@ -13,6 +13,7 @@
 typedef struct {
     int id;
     struct event *ev;
+    struct event_base *base_timer;
     struct timeval interval;
 } timer_data;
 

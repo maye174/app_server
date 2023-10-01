@@ -2,6 +2,7 @@
 #include "server/inc/exit.hpp"
 #include "event2/event.h"
 
+#include <atomic>
 #include <cstdlib>
 #include <random>
 #include <sstream>
@@ -52,6 +53,8 @@ void exit_api_gen(struct evhttp_request *req, void *arg) {
     LOG_F(ERROR, "%s", key.c_str());
 }
 
+std::atomic<bool> exit_flag = false;
+
 void exit_api_verify(struct evhttp_request *req, void *arg) {
     struct evbuffer *buf = evbuffer_new();
     if (!buf) {
@@ -99,9 +102,11 @@ void exit_api_verify(struct evhttp_request *req, void *arg) {
 
     key = gen_key();
 
+    exit_flag.store(true, std::memory_order_release);
+
     evhttp_send_reply(req, 200, "OK", buf);
     evbuffer_free(buf);
-    delete[] input_data;
+    free(input_data);
 
     LOG_F(ERROR, "exit");
 

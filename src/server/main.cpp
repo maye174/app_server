@@ -4,9 +4,11 @@
 //
 
 #include "event2/event.h"
+#include "event2/rpc.h"
 #include "server/inc/start.hpp"
 
 #include <loguru.hpp>
+#include <thread>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -32,6 +34,12 @@ int main() {
         return 1;
     }
 
+    struct event_base *base_timer = event_base_new();
+    if (!base_timer) {
+        LOG_F(ERROR, "Failed to create event base_timer");
+        return 1;
+    }
+
     struct evhttp *http = evhttp_new(base);
     if (!http) {
         LOG_F(ERROR, "Failed to create HTTP server");
@@ -39,7 +47,9 @@ int main() {
     }
 
     register_callback(base, http);
-    auto ev_list = register_timer(base);
+
+    // 注册定时器 第二个线程执行
+    auto ev_list = register_timer(base_timer);
 
     if (evhttp_bind_socket(http, "0.0.0.0", 3000) != 0) {
         LOG_F(ERROR, "Failed to bind to port 3000");
@@ -47,6 +57,7 @@ int main() {
     }
 
     event_base_dispatch(base);
+    std::thread timer_thread(event_base_dispatch, base_timer);
 
     for (auto &d : ev_list) {
         event_free(d->ev);
