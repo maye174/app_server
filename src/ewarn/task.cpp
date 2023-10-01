@@ -64,7 +64,7 @@ void ew_timer_task(evutil_socket_t fd, short events, void *arg) {
     for (auto &i : l) {
         std::string number = http_request_done(std::get<1>(i));
 
-        if (number.empty() || std::stoi(number) /*< 20*/)
+        if (number.empty() /*|| std::stoi(number) < 20*/)
             continue;
 
         if (m.find(std::get<1>(i)) == m.end())

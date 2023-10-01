@@ -45,7 +45,7 @@ void wxpusher_send_message(const std::string &appToken,
 
     // 设置请求头
     struct curl_slist *headers = nullptr;
-    headers = curl_slist_append(headers, "Content-Type: application/json");
+    headers = curl_slist_append(headers, "Content-Type:application/json");
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     // 发送请求
