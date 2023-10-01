@@ -43,6 +43,9 @@ void wxpusher_callback(struct evhttp_request *req, void *arg) {
 
     if (action == "app_subscribe") { // 用户订阅
         api_user_attention_callback(req, input_data);
+    } else {
+        LOG_F(ERROR, "未知的action\n 400");
+        evhttp_send_error(req, 400, "Bad Request");
     }
 
     free(input_data);
