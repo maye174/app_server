@@ -1,6 +1,8 @@
 
 #include "wxpusher/inc/data.hpp"
 
+#include <mutex>
+
 #include <event2/buffer.h>
 #include <event2/http.h>
 #include <event2/keyvalq_struct.h>
@@ -9,6 +11,8 @@
 #include <sqlite3.h>
 
 using json = nlohmann::json;
+
+static std::mutex mtx;
 
 void api_user_attention_callback(struct evhttp_request *req, void *arg) {
     struct evbuffer *buf = evbuffer_new();
@@ -47,6 +51,9 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
     int appId = j["data"]["appId"].get<int>();
     std::string uid = j["data"]["uid"].get<std::string>();
     std::string extra = j["data"]["extra"].get<std::string>();
+
+    // 上锁
+    std::lock_guard<std::mutex> lock(mtx);
 
     // 打开数据库
     sqlite3 *db;
@@ -122,6 +129,7 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
 
     // 关闭数据库
     sqlite3_close(db);
+
     // 200 OK
     evhttp_send_reply(req, 200, "OK", buf);
     evbuffer_free(buf);
@@ -130,6 +138,10 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
 using list = std::vector<std::tuple<std::string, std::string>>;
 
 list query_data_by_appid(int appid) {
+
+    // 上锁
+    std::lock_guard<std::mutex> lock(mtx);
+
     sqlite3 *db;
     list results;
 
