@@ -56,7 +56,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
     std::string room_number = j["room_number"].get<std::string>();
 
     std::string extra =
-        "{\"b\":" + building_number + ",\"r\":" + room_number + "}";
+        "{\"b\":\"" + building_number + "\",\"r\":\"" + room_number + "\"}";
 
     std::string app_token = get_someting_from_env("WXPUSHER_APP_EW_TOKEN");
     std::string qrcode_url = create_qrcode(app_token, extra, 1800);
