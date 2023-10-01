@@ -77,6 +77,25 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
         return;
     }
 
+    // 检查是否已经存在
+    std::string sql_query = "SELECT * FROM wxpusher_app_data WHERE appId = " +
+                            std::to_string(appId) + " AND uid = '" + uid + "';";
+    sqlite3_stmt *stmt;
+    rc = sqlite3_prepare_v2(db, sql_query.c_str(), -1, &stmt, nullptr);
+    if (rc == SQLITE_OK) {
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            LOG_F(INFO, "已存在\n 200");
+            evhttp_send_reply(req, 200, "OK", buf);
+            evbuffer_free(buf);
+            free(input_data);
+            return;
+        }
+    } else {
+        LOG_F(ERROR, "SQL error: %s", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return;
+    }
+
     // 插入数据
     std::string sql_insert =
         "INSERT INTO wxpusher_app_data (appId, uid, extra) VALUES (" +
@@ -101,15 +120,16 @@ list query_data_by_appid(int appid) {
     sqlite3 *db;
     list results;
 
-    int rc = sqlite3_open("app_data.db", &db);
+    int rc = sqlite3_open("wxpusher_app_data.db", &db);
     if (rc) {
         LOG_F(ERROR, "Can't open database: %s", sqlite3_errmsg(db));
         sqlite3_close(db);
         return results;
     }
 
-    std::string sql_query = "SELECT uid, extra FROM app_data WHERE appId = " +
-                            std::to_string(appid) + ";";
+    std::string sql_query =
+        "SELECT uid, extra FROM wxpusher_app_data WHERE appId = " +
+        std::to_string(appid) + ";";
     sqlite3_stmt *stmt;
     rc = sqlite3_prepare_v2(db, sql_query.c_str(), -1, &stmt, nullptr);
 
