@@ -42,7 +42,7 @@ void wxpusher_callback(struct evhttp_request *req, void *arg) {
     std::string action = j["action"].get_ref<std::string &>();
 
     if (action == "app_subscribe") { // 用户订阅
-        api_user_attention_callback(req, arg);
+        api_user_attention_callback(req, input_data);
     }
 
     free(input_data);

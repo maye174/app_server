@@ -19,12 +19,7 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
         return;
     }
 
-    // 获取请求正文
-    struct evbuffer *input_buffer = evhttp_request_get_input_buffer(req);
-    size_t input_len = evbuffer_get_length(input_buffer);
-    char *input_data = (char *)malloc(sizeof(char) * (input_len + 1));
-    evbuffer_remove(input_buffer, input_data, input_len);
-    input_data[input_len] = '\0';
+    auto input_data = (char *)arg;
 
     LOG_F(INFO, "%s", input_data);
 
@@ -87,7 +82,6 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
             LOG_F(INFO, "已存在\n 200");
             evhttp_send_reply(req, 200, "OK", buf);
             evbuffer_free(buf);
-            free(input_data);
             return;
         }
     } else {
@@ -111,7 +105,6 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
     // 200 OK
     evhttp_send_reply(req, 200, "OK", buf);
     evbuffer_free(buf);
-    free(input_data);
 }
 
 using list = std::vector<std::tuple<std::string, std::string>>;
