@@ -2,6 +2,7 @@
 #include "server/inc/start.hpp"
 #include "event2/http.h"
 #include "ewarn/inc/server.hpp"
+#include "ewarn/inc/task.hpp"
 #include "server/inc/exit.hpp"
 #include "wxpusher/inc/callback.hpp"
 
@@ -27,7 +28,7 @@ std::vector<timer_data *> register_timer(struct event_base *base) {
 
     int id = 0;
     std::vector<timer_data *> ret;
-    // ret.emplace_back(register_timer_helper(base, timer_flush, id++, 20));
+    ret.emplace_back(register_timer_helper(base, ew_timer_task, id++, 60));
 
     return ret;
 }

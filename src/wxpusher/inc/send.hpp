@@ -5,5 +5,6 @@
 #include <string>
 #include <vector>
 
-void send_message(const std::string &appToken, const std::string &content,
-                  const std::vector<std::string> &uids);
+void wxpusher_send_message(const std::string &appToken,
+                           const std::string &content,
+                           const std::vector<std::string> &uids);

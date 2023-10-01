@@ -18,11 +18,11 @@ int main() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
 
-#ifndef DEBUG
-    loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
-#else
+    // #ifndef DEBUG
+    //     loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
+    // #else
     loguru::g_stderr_verbosity = loguru::Verbosity_INFO;
-#endif
+    // #endif
 
     loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);
 

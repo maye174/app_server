@@ -12,8 +12,9 @@ static size_t write_callback(void *contents, size_t size, size_t nmemb,
     return size * nmemb;
 }
 
-void send_message(const std::string &appToken, const std::string &content,
-                  const std::vector<std::string> &uids) {
+void wxpusher_send_message(const std::string &appToken,
+                           const std::string &content,
+                           const std::vector<std::string> &uids) {
     CURL *curl = curl_easy_init();
     if (!curl) {
         LOG_F(ERROR, "can't init curl");
