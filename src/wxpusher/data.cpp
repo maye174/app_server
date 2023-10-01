@@ -69,6 +69,8 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
         LOG_F(ERROR, "SQL error: %s", err_msg);
         sqlite3_free(err_msg);
         sqlite3_close(db);
+        evhttp_send_reply(req, 500, "Internal Server Error", buf);
+        evbuffer_free(buf);
         return;
     }
 
@@ -103,6 +105,8 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
     } else {
         LOG_F(ERROR, "SQL error: %s", sqlite3_errmsg(db));
         sqlite3_close(db);
+        evhttp_send_reply(req, 500, "Internal Server Error", buf);
+        evbuffer_free(buf);
         return;
     }
 
