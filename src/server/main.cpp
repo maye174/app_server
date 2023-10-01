@@ -65,6 +65,7 @@ int main() {
     }
     evhttp_free(http);
     event_base_free(base);
+    event_base_free(base_timer);
 
 #ifdef _WIN32
     WSACleanup();
