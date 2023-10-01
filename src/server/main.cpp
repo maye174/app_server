@@ -21,7 +21,7 @@ int main() {
     // #ifndef DEBUG
     //     loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
     // #else
-    loguru::g_stderr_verbosity = loguru::Verbosity_INFO;
+    loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
     // #endif
 
     loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);

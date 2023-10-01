@@ -103,5 +103,7 @@ void exit_api_verify(struct evhttp_request *req, void *arg) {
     evbuffer_free(buf);
     delete[] input_data;
 
+    LOG_F(ERROR, "exit");
+
     event_base_loopexit((struct event_base *)arg, NULL);
 }
