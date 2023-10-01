@@ -53,11 +53,14 @@ void api_user_attention_callback(struct evhttp_request *req, void *arg) {
     std::string extra = j["data"]["extra"].get<std::string>();
 
     // 上锁
-    std::lock_guard<std::mutex> lock(mtx);
+    // std::lock_guard<std::mutex> lock(mtx);
 
     // 打开数据库
     sqlite3 *db;
-    int rc = sqlite3_open("wxpusher_app_data.db", &db);
+    int rc = sqlite3_open_v2("wxpusher_app_data.db", &db,
+                             SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
+                                 SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_WAL,
+                             nullptr);
     if (rc) {
         LOG_F(ERROR, "Can't open database: %s", sqlite3_errmsg(db));
         sqlite3_close(db);
@@ -140,12 +143,15 @@ using list = std::vector<std::tuple<std::string, std::string>>;
 list query_data_by_appid(int appid) {
 
     // 上锁
-    std::lock_guard<std::mutex> lock(mtx);
+    // std::lock_guard<std::mutex> lock(mtx);
 
     sqlite3 *db;
     list results;
 
-    int rc = sqlite3_open("wxpusher_app_data.db", &db);
+    int rc = sqlite3_open_v2("wxpusher_app_data.db", &db,
+                             SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE |
+                                 SQLITE_OPEN_FULLMUTEX | SQLITE_OPEN_WAL,
+                             nullptr);
     if (rc) {
         LOG_F(ERROR, "Can't open database: %s", sqlite3_errmsg(db));
         sqlite3_close(db);

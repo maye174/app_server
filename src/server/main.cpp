@@ -56,8 +56,8 @@ int main() {
         return 1;
     }
 
-    event_base_dispatch(base);
     std::thread timer_thread(event_base_dispatch, base_timer);
+    event_base_dispatch(base);
 
     for (auto &d : ev_list) {
         event_free(d->ev);
@@ -66,6 +66,9 @@ int main() {
     evhttp_free(http);
     event_base_free(base);
     event_base_free(base_timer);
+
+    if (timer_thread.joinable())
+        timer_thread.join();
 
 #ifdef _WIN32
     WSACleanup();
