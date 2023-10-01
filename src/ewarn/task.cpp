@@ -36,14 +36,14 @@ static std::string http_request_done(const std::string &j_s) {
         LOG_F(ERROR, "发生未知异常 - %s", e.what());
     }
 
-    if (!j.contains("building_number") || !j.contains("room_number")) {
+    if (!j.contains("b") || !j.contains("r")) {
         LOG_F(ERROR, "未找到building_number 或者 "
                      "room_number\n 400");
         return "";
     }
 
-    std::string building_number = j["building_number"].get_ref<std::string &>();
-    std::string room_number = j["room_number"].get_ref<std::string &>();
+    std::string building_number = j["b"].get_ref<std::string &>();
+    std::string room_number = j["r"].get_ref<std::string &>();
 
     std::string suffix = "sysid=1&roomid=" + room_number +
                          "&areaid=1&buildid=" + building_number;
