@@ -44,8 +44,10 @@ static std::string http_request_done(const std::string &_suffix) {
         return "";
     }
 
+    // 读取度前面的数字，包括小数点和负号
     while (start > 0 &&
-           (isdigit(content[start - 1]) || content[start - 1] == '.')) {
+           (isdigit(content[start - 1]) || content[start - 1] == '.' ||
+            content[start - 1] == '-')) {
         --start;
     }
     number = content.substr(start, pos - start);
