@@ -20,7 +20,7 @@ int main() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
 
-#ifndef DEBUG
+#ifdef DEBUG
     loguru::g_stderr_verbosity = loguru::Verbosity_MAX;
     loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);
 #else
