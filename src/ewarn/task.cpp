@@ -67,12 +67,16 @@ void ew_timer_task(evutil_socket_t fd, short events, void *arg) {
         if (number.empty() || std::stof(number) > 20.0)
             continue;
 
+        // LOG_F(INFO, "低于20度: %s", number.c_str());
+
         if (m.find(std::get<1>(i)) == m.end())
             m[std::get<1>(i)] = std::vector<std::string>();
         m[std::get<1>(i)].emplace_back(std::get<0>(i));
     }
 
     for (auto &[k, v] : m) {
+        LOG_F(INFO, "发送寝室号: %s", k.c_str());
+
         wxpusher_send_message(get_someting_from_env("WXPUSHER_APP_EW_TOKEN"),
                               "你的电费不足20度", v);
     }
