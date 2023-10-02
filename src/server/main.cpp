@@ -22,13 +22,12 @@ int main() {
 
 #ifdef DEBUG
     loguru::g_stderr_verbosity = loguru::Verbosity_MAX;
-    loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);
 #else
-    loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
-    loguru::add_file("app.log", loguru::Append, loguru::Verbosity_ERROR);
+    loguru::g_stderr_verbosity = loguru::Verbosity_OFF;
 #endif
 
-    // loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);
+    loguru::add_file("error.log", loguru::Append, loguru::Verbosity_ERROR);
+    loguru::add_file("info.log", loguru::Append, loguru::Verbosity_MAX);
 
     struct event_base *base = event_base_new();
     if (!base) {
