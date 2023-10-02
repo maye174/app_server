@@ -15,7 +15,7 @@ extern std::atomic<bool> exit_flag;
 static void check_exit_flag(evutil_socket_t fd, short events, void *arg) {
     auto d = (timer_data *)arg;
     if (exit_flag) {
-        LOG_F(INFO, "exit_flag is true, timer exit");
+        LOG_F(ERROR, "exit_flag is true, timer exit");
         event_base_loopbreak(d->base_timer);
         return;
     }
