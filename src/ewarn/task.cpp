@@ -77,7 +77,7 @@ void ew_timer_task(evutil_socket_t fd, short events, void *arg) {
     }
 
     for (auto &[k, v] : m) {
-        LOG_F(INFO, "发送寝室号: %s", k.c_str());
+        LOG_F(INFO, "发送到: %s", k.c_str());
 
         wxpusher_send_message(get_someting_from_env("WXPUSHER_APP_EW_TOKEN"),
                               "你的电费不足20度", v);

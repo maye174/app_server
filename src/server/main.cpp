@@ -20,13 +20,15 @@ int main() {
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 #endif
 
-    // #ifndef DEBUG
-    //     loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
-    // #else
-    loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
-    // #endif
-
+#ifndef DEBUG
+    loguru::g_stderr_verbosity = loguru::Verbosity_MAX;
     loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);
+#else
+    loguru::g_stderr_verbosity = loguru::Verbosity_ERROR;
+    loguru::add_file("app.log", loguru::Append, loguru::Verbosity_ERROR);
+#endif
+
+    // loguru::add_file("app.log", loguru::Append, loguru::Verbosity_MAX);
 
     struct event_base *base = event_base_new();
     if (!base) {
