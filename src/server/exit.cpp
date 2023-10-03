@@ -49,8 +49,7 @@ std::string key;
 
 void exit_api_gen(struct evhttp_request *req, void *arg) {
     key = gen_key();
-    // 在release下也输出key
-    LOG_F(ERROR, "%s", key.c_str());
+    LOG_F(INFO, "%s", key.c_str());
 }
 
 std::atomic<bool> exit_flag = false;
@@ -108,7 +107,7 @@ void exit_api_verify(struct evhttp_request *req, void *arg) {
     evbuffer_free(buf);
     free(input_data);
 
-    LOG_F(ERROR, "exit");
+    LOG_F(INFO, "exit");
 
     event_base_loopexit((struct event_base *)arg, NULL);
 }
