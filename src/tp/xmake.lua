@@ -12,5 +12,7 @@ target("quickjspp")
         file:close()
     end)
     set_kind("static")
-    add_cxflags("-DJS_STRICT_NAN_BOXING")
+    if is_plat("windows") then
+        add_cxflags("-DJS_STRICT_NAN_BOXING")
+    end
     add_files("quickjspp/lib*.c", "quickjspp/quickjs*.c", "quickjspp/cutils.c")
