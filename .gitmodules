@@ -1,0 +1,3 @@
+[submodule "src/tp/quickjspp"]
+	path = src/tp/quickjspp
+	url = https://github.com/panda-engine/quickjspp-fork.git
