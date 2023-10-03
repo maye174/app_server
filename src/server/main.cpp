@@ -4,7 +4,6 @@
 //
 
 #include "event2/event.h"
-#include "event2/rpc.h"
 #include "server/inc/start.hpp"
 
 #include <loguru.hpp>

@@ -56,7 +56,8 @@ static std::string http_request_done(const std::string &_suffix) {
 }
 
 void ew_timer_task(evutil_socket_t fd, short events, void *arg) {
-    LOG_F(INFO, "ew_timer_task");
+    auto d = (timer_data *)arg;
+    LOG_F(INFO, "id: %d", d->id);
 
     list l = query_data_by_appid(62383);
 
@@ -83,6 +84,5 @@ void ew_timer_task(evutil_socket_t fd, short events, void *arg) {
                               "你的电费不足20度", v);
     }
 
-    auto d = (timer_data *)arg;
     event_add(d->ev, &d->interval);
 }

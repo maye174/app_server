@@ -14,8 +14,10 @@ extern std::atomic<bool> exit_flag;
 
 static void check_exit_flag(evutil_socket_t fd, short events, void *arg) {
     auto d = (timer_data *)arg;
+    LOG_F(INFO, "id: %d", d->id);
+
     if (exit_flag) {
-        LOG_F(ERROR, "exit_flag is true, timer exit");
+        LOG_F(INFO, "exit_flag is true, timer exit");
         event_base_loopbreak(d->base_timer);
         return;
     }
@@ -47,7 +49,7 @@ std::vector<timer_data *> register_timer(struct event_base *base_timer) {
     ret.emplace_back(
         register_timer_helper(base_timer, check_exit_flag, id++, 20));
     ret.emplace_back(
-        register_timer_helper(base_timer, ew_timer_task, id++, 10800));
+        register_timer_helper(base_timer, ew_timer_task, id++, 86400));
 
     return ret;
 }
