@@ -1,3 +1,9 @@
+option("js")
+    set_default(is_plat("windows"))
+    set_showmenu(true)
+    add_cxflags("-DJS_STRICT_NAN_BOXING")
+option_end()
+
 target("quickjspp")
     before_build(function (target) 
         os.trycp("src/tp/quickjspp/cutils.h", "src/tp/inc/quickjspp/")
@@ -15,4 +21,6 @@ target("quickjspp")
     if is_plat("windows") then
         add_cxflags("-DJS_STRICT_NAN_BOXING")
     end
+    -- add_rules("flags")
+    -- add_options("js")
     add_files("quickjspp/lib*.c", "quickjspp/quickjs*.c", "quickjspp/cutils.c")
