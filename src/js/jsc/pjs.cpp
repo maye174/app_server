@@ -89,8 +89,9 @@ static JSContext *JS_NewCustomContext(JSRuntime *rt) {
 }
 
 JSRuntime *panda_jsc_new_rt(pmem *alloc) {
-    // log_debug("panda_jsc_new_rt", 0);
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_jsc_new_rt");
+#endif
     JSRuntime *p = JS_NewRuntime2(&def_malloc_funcs, alloc);
     js_std_set_worker_new_context_func(JS_NewCustomContext);
     js_std_init_handlers(p);
@@ -98,15 +99,17 @@ JSRuntime *panda_jsc_new_rt(pmem *alloc) {
 }
 
 void panda_jsc_free_rt(JSRuntime *p) {
-    // log_debug("panda_jsc_free_rt", 0);
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_jsc_free_rt");
+#endif
     js_std_free_handlers(p);
     JS_FreeRuntime(p);
 }
 
 static void run_obj(JSContext *ctx, JSValue obj, int load_only) {
-    // log_debug("run_obj: load_only{%d}", load_only);
+#ifdef JS_DEBUG
     LOG_F(INFO, "run_obj: load_only{%d}", load_only);
+#endif
     JSValue val;
     if (load_only) {
         if (JS_VALUE_GET_TAG(obj) == JS_TAG_MODULE) {
@@ -161,8 +164,9 @@ void panda_free_js(panda_js *pjs) {
 }
 
 panda_js *panda_js_to(JSRuntime *rt, const char *filename, panda_js_t type) {
-    // log_debug("panda_{%s}_to_{%d}", filename, type);
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_{%s}_to_{%d}", filename, type);
+#endif
     panda_js *pjs = panda_new_js(rt, type);
 
     if (!pjs or !pjs->ctx) {
@@ -186,8 +190,9 @@ panda_js *panda_js_to(JSRuntime *rt, const char *filename, panda_js_t type) {
 }
 
 void panda_js_run(panda_js *pjs) {
-    // log_debug("panda_js_run: type{%s}", (pjs->type) ? "obj" : "bc");
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_js_run: type{%s}", (pjs->type) ? "obj" : "bc");
+#endif
     if (pjs->type == bytecode) {
         panda_js_bc *bc = (panda_js_bc *)pjs->ptr;
         panda_js_bc *n = bc->next;

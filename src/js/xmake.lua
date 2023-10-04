@@ -1,4 +1,10 @@
 
+option("js_debug")
+    set_default(false)
+    set_showmenu(true)
+    set_category("option")
+    set_description("Enable debug mode for js engine")
+    add_defines("JS_DEBUG")
 
 target("jsc")
     set_kind("static")
@@ -7,6 +13,7 @@ target("jsc")
     set_languages("cxx20")
     add_packages("loguru")
     add_cxflags("-DJS_STRICT_NAN_BOXING")
+    add_options("js_debug")
 
 target("ffi")
     set_kind("static")
@@ -15,6 +22,7 @@ target("ffi")
     set_languages("cxx20")
     add_packages("loguru")
     add_cxflags("-DJS_STRICT_NAN_BOXING")
+    add_options("js_debug")
 
 target("dynamic_test")
     add_deps("jsc")

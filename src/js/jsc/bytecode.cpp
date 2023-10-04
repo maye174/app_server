@@ -12,7 +12,9 @@
 
 static void to_bytecode(JSContext *ctx, JSValueConst obj, panda_js_bc *jsc_b,
                         BOOL load_only) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "to_bytecode");
+#endif
     uint8_t *bytecode_buf;
     size_t bytecode_buf_len;
     int flags;
@@ -32,7 +34,9 @@ static void to_bytecode(JSContext *ctx, JSValueConst obj, panda_js_bc *jsc_b,
 
 static JSModuleDef *jsc_module_loader(JSContext *ctx, const char *module_name,
                                       void *opaque) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "loader modulename:{%s}", module_name);
+#endif
 
     JSModuleDef *m;
     char *find_buf;
@@ -96,7 +100,9 @@ static JSModuleDef *jsc_module_loader(JSContext *ctx, const char *module_name,
 
 static void compile_file(JSContext *ctx, panda_js_bc *jsc_b,
                          const char *filename) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "compile_file: %s", filename);
+#endif
     uint8_t *buf;
     int eval_flags;
     JSValue obj;
@@ -129,7 +135,9 @@ static void compile_file(JSContext *ctx, panda_js_bc *jsc_b,
 }
 
 panda_js_bc *panda_new_js_bc(JSContext *ctx) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "memory apply");
+#endif
     panda_js_bc *r = (panda_js_bc *)js_malloc(ctx, sizeof(panda_js_bc));
     if (!r) {
         LOG_F(ERROR, "Cannot apply for memory");
@@ -149,8 +157,9 @@ panda_js_bc *panda_new_js_bc(JSContext *ctx) {
 void panda_free_js_bc(JSContext *ctx, panda_js_bc *ptr) {
     if (ptr == nullptr)
         return;
-    // log_debug("panda_free_js_bc", 0);
+#ifdef JS_DEBUG
     LOG_F(INFO, "memory free");
+#endif
     namelist_free(ptr->cmodule_list);
     js_free(ctx, ptr->cmodule_list);
     js_free(ctx, ptr->bytecode);
@@ -160,7 +169,9 @@ void panda_free_js_bc(JSContext *ctx, panda_js_bc *ptr) {
 
 panda_js_bc *panda_js_toBytecode(JSRuntime *rt, JSContext *ctx,
                                  const char *filename) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_js_toBytecode filename: {%s}", filename);
+#endif
     panda_js_bc *jsc_b = panda_new_js_bc(ctx);
 
     if (!jsc_b) {

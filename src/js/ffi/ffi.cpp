@@ -57,14 +57,16 @@ void cmodule_list_add(const char *name, ffi_cmodule_t fn) {
 }
 
 void panda_js_init_ffi() {
-    // log_debug("panda_js_init_ffi", 0);
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_js_init_ffi");
+#endif
     cmodule_list_add("ffi", js_init_module_ffi);
 }
 
 void panda_js_free_ffi() {
-    // log_debug("panda_js_free_ffi", 0);
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_js_free_ffi");
+#endif
     cmodule_list_free();
     mi_free((void *)cl_load);
     lib_list_free();
@@ -75,7 +77,9 @@ static ffi_cmodule_t ffi_call_init_cmodule(const char *cmodule_name) {
 }
 
 JSModuleDef *panda_js_init_cmodule(JSContext *ctx, const char *cmodule_name) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_js_init_cmodule:{%s}", cmodule_name);
+#endif
 
     if (!cmodule_name) {
         LOG_F(ERROR, "cmodule_name is null");

@@ -7,7 +7,9 @@
 #include <sys/stat.h>
 
 void pmem_free_alloc(pmem *ptr) {
+#ifdef PMEM_DEBUG
     LOG_F(INFO, "pmem_free_alloc");
+#endif
     mi_free(ptr);
 }
 
@@ -26,7 +28,9 @@ static void _free(void *ptr, void *_ptr) { return mi_free(ptr); }
 pmem *pmem_new_alloc(size_t size, pmem_t type, void *_ptr) {
     pmem *r = (pmem *)mi_malloc(sizeof(pmem));
     if (type == normal) {
+#ifdef PMEM_DEBUG
         LOG_F(INFO, "pmem_new_alloc: normal");
+#endif
 
         r->type = normal;
         r->alloc = _malloc;

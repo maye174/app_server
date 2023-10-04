@@ -8,7 +8,9 @@
 
 static JSModuleDef *jsc_module_loader(JSContext *ctx, const char *module_name,
                                       void *opaque) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "loader modulename:{%s}", module_name);
+#endif
     JSModuleDef *m;
     char *find_buf;
     panda_js_obj *jsc_o = (panda_js_obj *)opaque;
@@ -72,7 +74,9 @@ static JSModuleDef *jsc_module_loader(JSContext *ctx, const char *module_name,
 
 static void compile_file(JSContext *ctx, panda_js_obj *jsc_o,
                          const char *filename) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "compile_file: %s", filename);
+#endif
     uint8_t *buf;
     int eval_flags;
     JSValue obj;
@@ -104,7 +108,9 @@ static void compile_file(JSContext *ctx, panda_js_obj *jsc_o,
 }
 
 panda_js_obj *panda_new_js_obj(JSContext *ctx) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "memory apply");
+#endif
     panda_js_obj *r = (panda_js_obj *)js_malloc(ctx, sizeof(panda_js_obj));
     if (!r) {
         LOG_F(ERROR, "Cannot apply for memory");
@@ -122,7 +128,9 @@ panda_js_obj *panda_new_js_obj(JSContext *ctx) {
 void panda_free_js_obj(JSContext *ctx, panda_js_obj *ptr) {
     if (ptr == nullptr)
         return;
+#ifdef JS_DEBUG
     LOG_F(INFO, "memory free");
+#endif
     namelist_free(ptr->cmodule_list);
     js_free(ctx, ptr->cmodule_list);
     panda_free_js_obj(ctx, ptr->next);
@@ -131,7 +139,9 @@ void panda_free_js_obj(JSContext *ctx, panda_js_obj *ptr) {
 
 panda_js_obj *panda_js_toObj(JSRuntime *rt, JSContext *ctx,
                              const char *filename) {
+#ifdef JS_DEBUG
     LOG_F(INFO, "panda_js_toObj filename: {%s}", filename);
+#endif
     panda_js_obj *jsc_o = panda_new_js_obj(ctx);
 
     if (!jsc_o) {
