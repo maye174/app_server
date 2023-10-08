@@ -54,7 +54,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
         LOG_F(ERROR, "发生未知异常 - %s", e.what());
     }
 
-    if (!j.contains("building_number") || !j.contains("room_number")) {
+    if (!body.contains("building_number") || !body.contains("room_number")) {
         LOG_F(ERROR, "未找到building_number 或者 "
                      "room_number\n 400");
         evhttp_send_error(req, 400, "Bad Request");
@@ -62,8 +62,8 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
         return;
     }
 
-    std::string building_number = j["building_number"].get<std::string>();
-    std::string room_number = j["room_number"].get<std::string>();
+    std::string building_number = body["building_number"].get<std::string>();
+    std::string room_number = body["room_number"].get<std::string>();
 
     std::string extra =
         "&buildid=" + building_number + "&roomid=" + room_number;
