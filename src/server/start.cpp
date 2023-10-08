@@ -47,7 +47,7 @@ std::vector<timer_data *> register_timer(struct event_base *base_timer) {
     int id = 0;
     std::vector<timer_data *> ret;
     ret.emplace_back(
-        register_timer_helper(base_timer, check_exit_flag, id++, 20));
+        register_timer_helper(base_timer, check_exit_flag, id++, 120));
     ret.emplace_back(
         register_timer_helper(base_timer, ew_timer_task, id++, 86400));
 
