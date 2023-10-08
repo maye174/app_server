@@ -1,10 +1,11 @@
 
 #include "ewarn/inc/server.hpp"
+#include "http/inc/http.hpp"
 #include "server/inc/util.hpp"
 #include "wxpusher/inc/qrcode.hpp"
 
 #include <string>
-#include <vector>
+// #include <vector>
 
 #include <event2/buffer.h>
 #include <event2/http.h>
@@ -23,19 +24,28 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
         return;
     }
 
-    // 获取请求正文
-    struct evbuffer *input_buffer = evhttp_request_get_input_buffer(req);
-    size_t input_len = evbuffer_get_length(input_buffer);
-    char *input_data = (char *)malloc(sizeof(char) * (input_len + 1));
-    evbuffer_remove(input_buffer, input_data, input_len);
-    input_data[input_len] = '\0';
+    // // 获取请求正文
+    // struct evbuffer *input_buffer = evhttp_request_get_input_buffer(req);
+    // size_t input_len = evbuffer_get_length(input_buffer);
+    // char *input_data = (char *)malloc(sizeof(char) * (input_len + 1));
+    // evbuffer_remove(input_buffer, input_data, input_len);
+    // input_data[input_len] = '\0';
 
-    LOG_F(INFO, "%s", input_data);
+    // LOG_F(INFO, "%s", input_data);
 
-    json j;
+    json j = get_http_json(req);
+    json body; // = j["data"];
+
+    if (j["method"].get_ref<std::string &>() != "POST" || !j.contains("body")) {
+        LOG_F(ERROR, "方法错误");
+        evhttp_send_error(req, 400, "Bad Request");
+        evbuffer_free(buf);
+        return;
+    }
 
     try {
-        j = json::parse(input_data);
+        // j = json::parse(input_data);
+        body = json::parse(j["body"].get_ref<std::string &>());
     } catch (const json::parse_error &e) {
         LOG_F(ERROR, "解析JSON数据时发生异常 - %s", e.what());
     } catch (const json::type_error &e) {
@@ -70,7 +80,7 @@ void ewarn_api_create_qrcode(struct evhttp_request *req, void *arg) {
                       "application/json");
     evhttp_send_reply(req, 200, "OK", buf);
     evbuffer_free(buf);
-    free(input_data);
+    // free(input_data);
 }
 
 extern std::string load_builds_json();
