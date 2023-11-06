@@ -20,7 +20,7 @@ std::string load_builds_json() {
 
         curl_easy_setopt(
             curl, CURLOPT_URL,
-            "https://218.22.140.88:8443/epay/wxpage/wanxiao/getbuild.json");
+            "https://card.aqnu.edu.cn/epay/wxpage/wanxiao/getbuild.json");
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS,
                          "sysid=1&areaid=1&districtid=1");
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
@@ -63,7 +63,7 @@ std::string load_rooms_json(const std::string &buildid) {
 
         curl_easy_setopt(
             curl, CURLOPT_URL,
-            "https://218.22.140.88:8443/epay/wxpage/wanxiao/getroom.json");
+            "https://card.aqnu.edu.cn/epay/wxpage/wanxiao/getroom.json");
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS, str.c_str());
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
         curl_easy_setopt(curl, CURLOPT_WRITEDATA, &read_buffer);
